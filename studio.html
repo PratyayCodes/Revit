@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Studio - REVIT</title>
+    <link rel="stylesheet" href="studio.css">
+    <script defer src="studio.js"></script>
+</head>
+<body>
+    <header>
+        <div class="header-container">
+            <h1><a href="index.html">REVIT</a></h1>
+        </div>
+    </header>
+
+    <div class="main-container">
+        <main class="content">
+            <section class="tabs">
+                <button class="tab-button active" data-tab="add-video">Add New Video</button>
+                <button class="tab-button" data-tab="manage-videos">Manage Videos</button>
+                <button class="tab-button" data-tab="settings">Settings</button>
+            </section>
+
+            <section id="add-video" class="tab-content active">
+                <h2>Add New Video</h2>
+                <form id="video-form">
+                    <div class="form-group">
+                        <label for="title">Title:</label>
+                        <input type="text" id="title" name="title" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="tags">Tags:</label>
+                        <input type="text" id="tags" name="tags">
+                    </div>
+                    <div class="form-group">
+                        <label for="embed">Embed URL:</label>
+                        <input type="url" id="embed" name="embed" required>
+                    </div>
+                    <button type="submit">Add Video</button>
+                </form>
+                <div id="form-message" class="form-message"></div>
+            </section>
+
+            <section id="manage-videos" class="tab-content">
+                <h2>Manage Videos</h2>
+                <div class="dropdown" id="filters-dropdown">
+                    <button class="dropdown-button">Filter Videos</button>
+                    <div class="dropdown-content">
+                        <label for="filter-tags">Filter by Tags:</label>
+                        <input type="text" id="filter-tags" placeholder="Enter tags to filter">
+                        <button id="filter-button">Apply Filter</button>
+                    </div>
+                </div>
+                <div class="dropdown" id="sort-dropdown">
+                    <button class="dropdown-button">Sort Videos</button>
+                    <div class="dropdown-content">
+                        <label for="sort-by">Sort by:</label>
+                        <select id="sort-by">
+                            <option value="title">Title</option>
+                            <option value="date">Date</option>
+                        </select>
+                    </div>
+                </div>
+                <div id="video-list">
+                    <!-- Video entries will be rendered here with delete buttons -->
+                </div>
+                <div id="empty-state" class="empty-state">
+                    <p>No more videos available.</p>
+                </div>
+                <div id="loading" class="loading">
+                    <p>Loading more videos...</p>
+                </div>
+            </section>
+
+            <section id="settings" class="tab-content">
+                <h2>Settings</h2>
+                <p>Settings options will go here.</p>
+            </section>
+
+            <div id="response-message" class="response-message"></div>
+        </main>
+    </div>
+
+    <!-- Confirmation and success modals -->
+    <div id="confirm-modal" class="modal">
+        <div class="modal-content">
+            <span class="close-btn" id="confirm-modal-close">&times;</span>
+            <p>Are you sure you want to delete this video?</p>
+            <button id="confirm-delete">Yes, delete</button>
+            <button id="cancel-delete">Cancel</button>
+        </div>
+    </div>
+
+    <div id="success-modal" class="modal">
+        <div class="modal-content">
+            <span class="close-btn" id="success-modal-close">&times;</span>
+            <p>Video deleted successfully!</p>
+        </div>
+    </div>
+</body>
+</html>
