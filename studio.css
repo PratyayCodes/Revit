@@ -5,6 +5,8 @@
   --text-color: #ffffff;
   --card-bg-color: #1e1e1e;
   --modal-bg-color: rgba(0, 0, 0, 0.8);
+  --button-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  --button-hover-shadow: 0 6px 12px rgba(0, 0, 0, 0.3);
 }
 
 * {
@@ -18,6 +20,7 @@ body {
   line-height: 1.6;
   color: var(--text-color);
   background-color: var(--background-color);
+  overflow-x: hidden;
 }
 
 /* Header styles */
@@ -25,7 +28,10 @@ header {
   background: linear-gradient(45deg, var(--primary-color), var(--secondary-color));
   padding: 1rem;
   text-align: center;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  box-shadow: var(--button-shadow);
+  position: sticky;
+  top: 0;
+  z-index: 100;
 }
 
 header h1 a {
@@ -52,17 +58,25 @@ header h1 a:hover {
   background: var(--primary-color);
   color: var(--text-color);
   border: none;
-  padding: 1rem;
+  padding: 0.75rem 1rem;
   cursor: pointer;
   flex: 1;
   text-align: center;
-  font-size: 1rem;
+  font-size: 0.9rem;
   border-radius: 5px;
-  transition: background 0.3s ease;
+  transition: background 0.3s ease, transform 0.2s ease;
+  box-shadow: var(--button-shadow);
+  margin-right: 0.5rem;
 }
 
 .tab-button.active {
   background: var(--secondary-color);
+}
+
+.tab-button:hover {
+  background: var(--secondary-color);
+  transform: translateY(-2px);
+  box-shadow: var(--button-hover-shadow);
 }
 
 .tab-content {
@@ -84,15 +98,18 @@ header h1 a:hover {
   background: var(--primary-color);
   color: var(--text-color);
   border: none;
-  padding: 1rem;
+  padding: 0.75rem 1.25rem;
   cursor: pointer;
   border-radius: 5px;
-  font-size: 1rem;
-  transition: background 0.3s ease;
+  font-size: 0.9rem;
+  transition: background 0.3s ease, transform 0.2s ease;
+  box-shadow: var(--button-shadow);
 }
 
 .dropdown-button:hover {
   background: var(--secondary-color);
+  transform: translateY(-2px);
+  box-shadow: var(--button-hover-shadow);
 }
 
 .dropdown-content {
@@ -103,6 +120,7 @@ header h1 a:hover {
   box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
   z-index: 1;
   border-radius: 5px;
+  overflow: hidden;
 }
 
 .dropdown-content.active {
@@ -116,6 +134,10 @@ header h1 a:hover {
   display: block;
   padding: 0.5rem;
   width: 100%;
+  border: none;
+  background: transparent;
+  color: var(--text-color);
+  cursor: pointer;
 }
 
 /* Form and content styling */
@@ -147,16 +169,21 @@ button[type="submit"] {
   border-radius: 5px;
   cursor: pointer;
   font-size: 1rem;
+  transition: background 0.3s ease, transform 0.2s ease;
+  box-shadow: var(--button-shadow);
 }
 
 button[type="submit"]:hover {
   background-color: var(--secondary-color);
+  transform: translateY(-2px);
+  box-shadow: var(--button-hover-shadow);
 }
 
 .form-message {
   margin-top: 1rem;
   font-weight: bold;
   color: var(--secondary-color);
+  text-align: center;
 }
 
 /* Empty state styling */
@@ -164,6 +191,7 @@ button[type="submit"]:hover {
   text-align: center;
   margin-top: 2rem;
   color: var(--text-color);
+  font-size: 1.25rem;
 }
 
 /* Loading state */
@@ -171,6 +199,44 @@ button[type="submit"]:hover {
   text-align: center;
   margin-top: 2rem;
   color: var(--text-color);
+  font-size: 1.25rem;
+}
+
+/* Video card styling */
+.video-card {
+  background: var(--card-bg-color);
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: var(--button-shadow);
+  margin: 0.5rem;
+  width: 200px; /* Adjust width for smaller cards */
+  height: auto;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.video-card:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--button-hover-shadow);
+}
+
+.thumbnail img {
+  width: 100%;
+  height: auto;
+  display: block;
+}
+
+.card-info {
+  padding: 0.5rem;
+  color: var(--text-color);
+}
+
+.card-info h3 {
+  font-size: 1rem;
+  margin-bottom: 0.5rem;
+}
+
+.card-info p {
+  font-size: 0.875rem;
 }
 
 /* Responsive design */
@@ -192,7 +258,7 @@ button[type="submit"]:hover {
   }
 
   .video-cards {
-    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); /* Adjust for smaller cards */
   }
 }
 
@@ -213,20 +279,24 @@ button[type="submit"]:hover {
 .modal-content {
   background-color: var(--card-bg-color);
   padding: 2rem;
-  border-radius: 5px;
+  border-radius: 8px;
   max-width: 500px;
   width: 90%;
   text-align: center;
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3);
+  position: relative;
 }
 
 .modal-header {
   margin-bottom: 1rem;
   font-size: 1.5rem;
   font-weight: bold;
+  color: var(--secondary-color);
 }
 
 .modal-body {
   margin-bottom: 1rem;
+  color: var(--text-color);
 }
 
 .modal-footer {
@@ -243,11 +313,14 @@ button[type="submit"]:hover {
   cursor: pointer;
   border-radius: 5px;
   font-size: 1rem;
-  transition: background 0.3s ease;
+  transition: background 0.3s ease, transform 0.2s ease;
+  box-shadow: var(--button-shadow);
 }
 
 .modal-button:hover {
   background: var(--secondary-color);
+  transform: translateY(-2px);
+  box-shadow: var(--button-hover-shadow);
 }
 
 .modal-close {
@@ -256,6 +329,12 @@ button[type="submit"]:hover {
   right: 0.5rem;
   cursor: pointer;
   font-size: 1.5rem;
+  color: var(--text-color);
+  transition: color 0.3s ease;
+}
+
+.modal-close:hover {
+  color: var(--secondary-color);
 }
 
 /* Hide modal when not active */
