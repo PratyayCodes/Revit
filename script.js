@@ -5,7 +5,6 @@ document.addEventListener('DOMContentLoaded', function() {
     let allVideos = [];
     let filteredVideos = [];
     let searchQuery = '';
-    let isSearchActive = false;
 
     function fetchAllVideos() {
         return fetch('/get_videos')
@@ -114,7 +113,6 @@ document.addEventListener('DOMContentLoaded', function() {
 
     function searchVideos(query) {
         searchQuery = query;
-        isSearchActive = query.length > 0;
         filteredVideos = allVideos.filter(video => {
             return video.title.toLowerCase().includes(query.toLowerCase()) ||
                    video.tags.toLowerCase().includes(query.toLowerCase());
