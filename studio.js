@@ -23,6 +23,7 @@ document.addEventListener('DOMContentLoaded', function() {
     const cancelDeleteBtn = document.getElementById('cancel-delete');
     const confirmModalClose = document.getElementById('confirm-modal-close');
     const successModalClose = document.getElementById('success-modal-close');
+    const formMessage = document.getElementById('form-message');
 
     // Fetch all videos from the server
     function fetchAllVideos() {
@@ -116,10 +117,11 @@ document.addEventListener('DOMContentLoaded', function() {
                 body: new URLSearchParams(data)
             });
             if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
-            await fetchAllVideos(); // Reload videos after addition
+            // Reload the page after adding video
+            window.location.reload();
         } catch (error) {
             console.error('Error adding video:', error);
-            document.getElementById('form-message').innerText = 'Error adding video. Please try again.';
+            formMessage.textContent = 'Error adding video. Please try again.';
         }
     };
 
@@ -127,33 +129,33 @@ document.addEventListener('DOMContentLoaded', function() {
     const deleteVideo = async (id) => {
         try {
             await fetch(`/delete_video/${id}`, { method: 'DELETE' });
-            await fetchAllVideos(); // Reload videos after deletion
-            showSuccessModal();
+            // Reload the page after deleting video
+            window.location.reload();
         } catch (error) {
             console.error('Error deleting video:', error);
         }
     };
 
+    // Function to show the modal
+    function showModal(modal) {
+        modal.style.display = 'flex';
+    }
+
+    // Function to hide the modal
+    function hideModal(modal) {
+        modal.style.display = 'none';
+    }
+
     // Function to show the confirmation modal
     const showConfirmModal = (id) => {
         videoToDelete = id;
-        confirmModal.style.display = 'block';
+        showModal(confirmModal);
     };
 
     // Function to hide the confirmation modal
     const hideConfirmModal = () => {
-        confirmModal.style.display = 'none';
+        hideModal(confirmModal);
         videoToDelete = null;
-    };
-
-    // Function to show the success modal
-    const showSuccessModal = () => {
-        successModal.style.display = 'block';
-    };
-
-    // Function to hide the success modal
-    const hideSuccessModal = () => {
-        successModal.style.display = 'none';
     };
 
     // Event listener for delete buttons
@@ -179,7 +181,11 @@ document.addEventListener('DOMContentLoaded', function() {
     confirmModalClose.addEventListener('click', hideConfirmModal);
 
     // Event listener for close button on success modal
-    successModalClose.addEventListener('click', hideSuccessModal);
+    successModalClose.addEventListener('click', () => {
+        hideModal(successModal);
+        // Refresh the page after closing the success modal
+        window.location.reload();
+    });
 
     // Event listener for search input
     if (searchInput) {
