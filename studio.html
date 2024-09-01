@@ -24,9 +24,9 @@
         <div class="tab-content active" id="all-videos">
             <div class="controls">
                 <!-- Search -->
-                  <div align="center" class="search-bar">
-        <input align="center" type="text" id="search" placeholder="Search...">
-    </div>
+                <div class="search-bar">
+                    <input type="text" id="search" placeholder="Search...">
+                </div>
                 <!-- Filters Dropdown -->
                 <div class="dropdown">
                     <button class="dropdown-button" data-dropdown="filters">Filters</button>
@@ -35,7 +35,6 @@
                         <button id="filter-button">Apply Filter</button>
                     </div>
                 </div>
-
                 <!-- Sort Dropdown -->
                 <div class="dropdown">
                     <button class="dropdown-button" data-dropdown="sort">Sort By</button>
@@ -56,25 +55,21 @@
 
         <!-- Add Video Tab -->
         <div class="tab-content" id="add-video">
-          <div class="search-bar">
-            
-         
-            <form id="video-form">
-              
-              
-                <label for="title">Title:</label>
-                <input type="text" name="title" id="title" required><br><br>
+            <div class="search-bar">
+                <form id="video-form">
+                    <label for="title">Title:</label>
+                    <input type="text" name="title" id="title" required><br>
 
-                <label for="tags">Tags:</label>
-                <input type="text" name="tags" id="tags" required><br><br>
+                    <label for="tags">Tags:</label>
+                    <input type="text" name="tags" id="tags" required><br>
 
-                <label for="embed">Video Embed URL:</label>
-                <input type="text" name="embed" id="embed" required><br><br>
+                    <label for="embed">Video Embed URL:</label>
+                    <input type="text" name="embed" id="embed" required><br>
 
-                <button type="submit">Add Video</button>
-                <div id="form-message"></div>
-            </form>
-          </div>
+                    <button type="submit">Add Video</button>
+                    <div id="form-message" class="error"></div>
+                </form>
+            </div>
         </div>
     </div>
 
