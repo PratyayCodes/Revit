@@ -97,7 +97,6 @@ document.addEventListener('DOMContentLoaded', function() {
                 card.innerHTML = '<div class="error">Error loading video</div>';
             });
 
-        
             fragment.appendChild(card);
             card.appendChild(videoElement); // Ensure the video element is added to the DOM
             videoElement.load(); // Load the video element
@@ -260,17 +259,17 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Event listener for sort button inside the dropdown
     if (sortDropdown) {
-        sortDropdown.addEventListener('click', (event) => {
-            if (event.target.id === 'sort-button') {
-                const sortBy = document.getElementById('sort-option').value;
-                if (sortBy === 'title') {
-                    filteredVideos.sort((a, b) => a.title.localeCompare(b.title));
-                } else if (sortBy === 'tags') {
-                    filteredVideos.sort((a, b) => a.tags.localeCompare(b.tags));
-                }
-                displayVideos(filteredVideos.slice(0, limit));
-                sortDropdown.classList.remove('active'); // Hide dropdown after selection
+        sortDropdown.addEventListener('change', (event) => {
+            const sortBy = event.target.value;
+            if (sortBy === 'title') {
+                filteredVideos.sort((a, b) => a.title.localeCompare(b.title));
+            } else if (sortBy === 'tags') {
+                filteredVideos.sort((a, b) => a.tags.localeCompare(b.tags));
+            } else if (sortBy === 'date') {
+                filteredVideos.sort((a, b) => new Date(b.date) - new Date(a.date));
             }
+            displayVideos(filteredVideos.slice(0, limit));
+            sortDropdown.classList.remove('active'); // Hide dropdown after selection
         });
     }
 
