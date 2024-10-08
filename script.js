@@ -1,6 +1,6 @@
 document.addEventListener('DOMContentLoaded', function() {
     let page = 0;
-    const limit = 10;
+    const limit = 5; // Number of videos to load at once
     let loading = false;
     let allVideos = [];
     let filteredVideos = [];
@@ -28,18 +28,26 @@ document.addEventListener('DOMContentLoaded', function() {
             const card = document.createElement('div');
             card.className = 'video-card';
 
-            // Create video element and set up attributes
+            // Loading spinner while the video is being loaded
+            const loadingSpinner = document.createElement('div');
+            loadingSpinner.className = 'loading-spinner';
+            card.appendChild(loadingSpinner);
+
+            // Create video element
             const videoElement = document.createElement('video');
             videoElement.src = video.embed;
             videoElement.crossOrigin = 'anonymous';
-            videoElement.muted = true; // Mute the video
-            videoElement.style.display = 'none'; // Hide the video element
-            videoElement.playsInline = true; // Necessary for some browsers to play video without user interaction
-            videoElement.preload = 'auto'; // Preload the video (can be 'none', 'metadata', or 'auto')
+            videoElement.muted = true;
+            videoElement.playsInline = true;
+            videoElement.preload = 'auto'; // Ensures compatibility across mobile devices
+
+            // Hide the video initially
+            videoElement.style.display = 'none';
 
             const canvas = document.createElement('canvas');
             const context = canvas.getContext('2d');
 
+            // Function to create video thumbnail
             function createThumbnail() {
                 canvas.width = videoElement.videoWidth;
                 canvas.height = videoElement.videoHeight;
@@ -48,31 +56,45 @@ document.addEventListener('DOMContentLoaded', function() {
 
                 card.innerHTML = `
                     <div class="thumbnail">
-                        <img src="${thumbnailSrc}" alt="${video.title}" />
+                        <img src="${thumbnailSrc}" alt="${video.title}" loading="lazy" />
                     </div>
                     <div class="card-info">
                         <h3>${video.title}</h3>
                         <p>${video.tags}</p>
                     </div>
                 `;
+
+                // Hide spinner when thumbnail is created
+                loadingSpinner.style.display = 'none';
             }
 
+            // Lazy load the video preview only when it enters the viewport
+            const observer = new IntersectionObserver((entries, observer) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        videoElement.load(); // Load video data
+                        observer.unobserve(entry.target); // Stop observing after it's loaded
+                    }
+                });
+            }, { threshold: 0.5 });
+
+            observer.observe(card); // Start observing the card
+
             videoElement.addEventListener('loadedmetadata', () => {
-                videoElement.currentTime = 1; // Set time to 1 second to capture a frame
+                videoElement.currentTime = 1; // Capture a frame for the thumbnail
             });
 
             videoElement.addEventListener('seeked', () => {
-                createThumbnail();
+                createThumbnail(); // Create the thumbnail after seeking
             });
 
-            // Add click event to redirect to video.html with video details
+            // Redirect to video page on click
             card.addEventListener('click', () => {
                 window.location.href = `video.html?title=${encodeURIComponent(video.title)}&tags=${encodeURIComponent(video.tags)}&embed=${encodeURIComponent(video.embed)}`;
             });
 
             fragment.appendChild(card);
-            card.appendChild(videoElement); // Ensure the video element is added to the DOM
-            videoElement.load(); // Load the video element
+            card.appendChild(videoElement); // Ensure video is part of the DOM
         });
 
         videoCardsContainer.appendChild(fragment);
