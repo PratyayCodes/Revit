@@ -28,65 +28,34 @@ document.addEventListener('DOMContentLoaded', function() {
             const card = document.createElement('div');
             card.className = 'video-card';
 
-            // Loading spinner while the video is being loaded
-            const loadingSpinner = document.createElement('div');
-            loadingSpinner.className = 'loading-spinner';
-            card.appendChild(loadingSpinner);
+            // Thumbnail image
+            const thumbnailImg = document.createElement('img');
+            thumbnailImg.src = `thumbnail/${video.id}.webp`; // Path to the thumbnail image
+            thumbnailImg.alt = video.title;
+            thumbnailImg.className = 'thumbnail-image';
+            thumbnailImg.loading = 'lazy'; // Optimize loading
 
-            // Create video element
-            const videoElement = document.createElement('video');
-            videoElement.src = video.embed;
-            videoElement.crossOrigin = 'anonymous';
-            videoElement.muted = true;
-            videoElement.playsInline = true;
-            videoElement.preload = 'auto'; // Ensures compatibility across mobile devices
+            // Handle thumbnail load error
+            thumbnailImg.onerror = () => {
+                console.error(`Thumbnail not found for video ID: ${video.id}`);
+                thumbnailImg.src = 'path/to/default-thumbnail.webp'; // Use a default thumbnail if needed
+            };
 
-            // Hide the video initially
-            videoElement.style.display = 'none';
+            // Append thumbnail and video info to the card
+            card.innerHTML += `
+                <div class="thumbnail">
+                    ${thumbnailImg.outerHTML}
+                </div>
+                <div class="card-info">
+                    <h3>${video.title}</h3>
+                    <p>${video.tags}</p>
+                </div>
+            `;
 
-            const canvas = document.createElement('canvas');
-            const context = canvas.getContext('2d');
-
-            // Function to create video thumbnail
-            function createThumbnail() {
-                canvas.width = videoElement.videoWidth;
-                canvas.height = videoElement.videoHeight;
-                context.drawImage(videoElement, 0, 0, canvas.width, canvas.height);
-                const thumbnailSrc = canvas.toDataURL('image/jpeg');
-
-                card.innerHTML = `
-                    <div class="thumbnail">
-                        <img src="${thumbnailSrc}" alt="${video.title}" loading="lazy" />
-                    </div>
-                    <div class="card-info">
-                        <h3>${video.title}</h3>
-                        <p>${video.tags}</p>
-                    </div>
-                `;
-
-                // Hide spinner when thumbnail is created
-                loadingSpinner.style.display = 'none';
-            }
-
-            // Lazy load the video preview only when it enters the viewport
-            const observer = new IntersectionObserver((entries, observer) => {
-                entries.forEach(entry => {
-                    if (entry.isIntersecting) {
-                        videoElement.load(); // Load video data
-                        observer.unobserve(entry.target); // Stop observing after it's loaded
-                    }
-                });
-            }, { threshold: 0.5 });
-
-            observer.observe(card); // Start observing the card
-
-            videoElement.addEventListener('loadedmetadata', () => {
-                videoElement.currentTime = 1; // Capture a frame for the thumbnail
-            });
-
-            videoElement.addEventListener('seeked', () => {
-                createThumbnail(); // Create the thumbnail after seeking
-            });
+            // Hide the loading spinner once the thumbnail is loaded
+            thumbnailImg.onload = () => {
+                // No spinner to hide here, as it's moved below
+            };
 
             // Redirect to video page on click
             card.addEventListener('click', () => {
@@ -94,19 +63,20 @@ document.addEventListener('DOMContentLoaded', function() {
             });
 
             fragment.appendChild(card);
-            card.appendChild(videoElement); // Ensure video is part of the DOM
         });
 
         videoCardsContainer.appendChild(fragment);
+        
+        // Hide global loading spinner after videos are loaded
         loading = false;
-        document.getElementById('loading').style.display = 'none';
+        document.getElementById('loading').style.display = 'none'; // Hide loading spinner at the bottom
     }
 
     function loadMoreVideos() {
         if (loading) return;
 
         loading = true;
-        document.getElementById('loading').style.display = 'block';
+        document.getElementById('loading').style.display = 'block'; // Show loading spinner at the bottom
 
         const start = page * limit;
         const end = start + limit;
@@ -116,7 +86,7 @@ document.addEventListener('DOMContentLoaded', function() {
             displayVideos(currentEntries, true);
             page++;
         } else {
-            document.getElementById('loading').style.display = 'none';
+            document.getElementById('loading').style.display = 'none'; // Hide loading spinner if no more videos
         }
 
         loading = false;
