@@ -52,55 +52,21 @@ document.addEventListener('DOMContentLoaded', function() {
             const card = document.createElement('div');
             card.className = 'video-card';
 
-            // Create video element and set up attributes
-            const videoElement = document.createElement('video');
-            videoElement.src = video.embed;
-            videoElement.crossOrigin = 'anonymous';
-            videoElement.muted = true; // Mute the video
-            videoElement.style.display = 'none'; // Hide the video element
-            videoElement.playsInline = true; // Necessary for some browsers to play video without user interaction
+            // Use the pre-generated thumbnail from public/thumbnail/
+            const thumbnailSrc = `/thumbnail/${video.id}.webp`;
 
-            const canvas = document.createElement('canvas');
-            const context = canvas.getContext('2d');
-
-            function createThumbnail() {
-                canvas.width = videoElement.videoWidth;
-                canvas.height = videoElement.videoHeight;
-                context.drawImage(videoElement, 0, 0, canvas.width, canvas.height);
-                const thumbnailSrc = canvas.toDataURL('image/jpeg');
-
-                if (thumbnailSrc) {
-                    card.innerHTML = `
-                        <div class="thumbnail">
-                            <img src="${thumbnailSrc}" alt="${video.title}" />
-                        </div>
-                        <div class="card-info">
-                            <h3>${video.title}</h3>
-                            <p>${video.tags}</p>
-                            <button class="delete-button" data-id="${video.id}">🗑️ Delete</button>
-                        </div>
-                    `;
-                } else {
-                    card.innerHTML = '<div class="error">Error generating thumbnail</div>';
-                }
-            }
-
-            videoElement.addEventListener('loadedmetadata', () => {
-                videoElement.currentTime = 1; // Set time to 1 second to capture a frame
-            });
-
-            videoElement.addEventListener('seeked', () => {
-                createThumbnail();
-            });
-
-            videoElement.addEventListener('error', (e) => {
-                console.error('Error loading video:', e);
-                card.innerHTML = '<div class="error">Error loading video</div>';
-            });
+            card.innerHTML = `
+                <div class="thumbnail">
+                    <img src="${thumbnailSrc}" alt="${video.title}" />
+                </div>
+                <div class="card-info">
+                    <h3>${video.title}</h3>
+                    <p>${video.tags}</p>
+                    <button class="delete-button" data-id="${video.id}">🗑️ Delete</button>
+                </div>
+            `;
 
             fragment.appendChild(card);
-            card.appendChild(videoElement); // Ensure the video element is added to the DOM
-            videoElement.load(); // Load the video element
         });
 
         videoCardsContainer.appendChild(fragment);
@@ -300,6 +266,15 @@ document.addEventListener('DOMContentLoaded', function() {
         loading = false;
     }
 
+    // Function to handle scroll event
+    window.addEventListener('scroll', () => {
+        const { scrollTop, scrollHeight, clientHeight } = document.documentElement;
+
+        if (scrollTop + clientHeight >= scrollHeight - 5) { // Load more videos when nearing the bottom
+            loadMoreVideos();
+        }
+    });
+
     // Function to search videos
     function searchVideos(query) {
         searchQuery = query;
@@ -313,22 +288,19 @@ document.addEventListener('DOMContentLoaded', function() {
         displayVideos(filteredVideos.slice(0, limit));
     }
 
-    // Debounce function to limit frequency of function calls
+    // Debounce function to limit the rate of input events
     function debounce(func, wait) {
         let timeout;
-        return function(...args) {
+        return function executedFunction(...args) {
+            const later = () => {
+                clearTimeout(timeout);
+                func(...args);
+            };
             clearTimeout(timeout);
-            timeout = setTimeout(() => func.apply(this, args), wait);
+            timeout = setTimeout(later, wait);
         };
     }
 
-    // Event listener for scroll to load more videos
-    window.addEventListener('scroll', debounce(() => {
-        if (window.innerHeight + window.scrollY >= document.documentElement.scrollHeight - 200) {
-            loadMoreVideos();
-        }
-    }, 200));
-
-    // Initial fetch of videos
+    // Initialize the app by fetching videos
     fetchAllVideos();
 });
