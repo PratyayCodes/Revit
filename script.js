@@ -13,9 +13,6 @@ document.addEventListener('DOMContentLoaded', function() {
                 allVideos = data.videos;
                 filteredVideos = allVideos;
                 displayVideos(filteredVideos.slice(0, limit));
-            })
-            .catch(error => {
-                console.error('Error fetching video data:', error);
             });
     }
 
@@ -38,6 +35,7 @@ document.addEventListener('DOMContentLoaded', function() {
             videoElement.muted = true; // Mute the video
             videoElement.style.display = 'none'; // Hide the video element
             videoElement.playsInline = true; // Necessary for some browsers to play video without user interaction
+            videoElement.preload = 'auto'; // Preload the video (can be 'none', 'metadata', or 'auto')
 
             const canvas = document.createElement('canvas');
             const context = canvas.getContext('2d');
@@ -48,19 +46,15 @@ document.addEventListener('DOMContentLoaded', function() {
                 context.drawImage(videoElement, 0, 0, canvas.width, canvas.height);
                 const thumbnailSrc = canvas.toDataURL('image/jpeg');
 
-                if (thumbnailSrc) {
-                    card.innerHTML = `
-                        <div class="thumbnail">
-                            <img src="${thumbnailSrc}" alt="${video.title}" />
-                        </div>
-                        <div class="card-info">
-                            <h3>${video.title}</h3>
-                            <p>${video.tags}</p>
-                        </div>
-                    `;
-                } else {
-                    card.innerHTML = '<div class="error">Error generating thumbnail</div>';
-                }
+                card.innerHTML = `
+                    <div class="thumbnail">
+                        <img src="${thumbnailSrc}" alt="${video.title}" />
+                    </div>
+                    <div class="card-info">
+                        <h3>${video.title}</h3>
+                        <p>${video.tags}</p>
+                    </div>
+                `;
             }
 
             videoElement.addEventListener('loadedmetadata', () => {
@@ -69,11 +63,6 @@ document.addEventListener('DOMContentLoaded', function() {
 
             videoElement.addEventListener('seeked', () => {
                 createThumbnail();
-            });
-
-            videoElement.addEventListener('error', (e) => {
-                console.error('Error loading video:', e);
-                card.innerHTML = '<div class="error">Error loading video</div>';
             });
 
             // Add click event to redirect to video.html with video details
