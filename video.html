@@ -3,49 +3,28 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>REVIT</title>
-    <link rel="stylesheet" href="styles.css">
+    <title>Video Page</title>
+    <link rel="stylesheet" href="video.css">
 </head>
 <body>
     <header>
         <h1 align="center"><a href="index.html">REVIT</a></h1>
     </header>
 
+    <section class="video-page">
+        <div class="video-container">
+            <div id="video-player" class="video-player"></div>
+            <div id="video-info" class="video-info"></div>
+        </div>
 
-    <section class="video-container">
-        <div id="video-player" class="video-player"></div>
-        <div id="video-info" class="video-info"></div>
+        <section class="related-videos-container">
+            <h2>Related Videos</h2>
+            <div class="related-videos-wrapper" id="related-videos">
+                <!-- Related video cards will be dynamically inserted here by video.js -->
+            </div>
+        </section>
     </section>
 
-    
-
-    <script>
-        function getQueryParams() {
-            const params = new URLSearchParams(window.location.search);
-            return {
-                title: params.get('title'),
-                tags: params.get('tags'),
-                embed: params.get('embed')
-            };
-        }
-
-        document.addEventListener('DOMContentLoaded', () => {
-            const { title, tags, embed } = getQueryParams();
-
-            if (title && tags && embed) {
-                document.getElementById('video-player').innerHTML = `
-                    <div class="video-embed">
-                        <iframe src="${embed}" frameborder="0" allowfullscreen></iframe>
-                    </div>
-                `;
-                document.getElementById('video-info').innerHTML = `
-                    <h1>${title}</h1>
-                    <p>${tags}</p>
-                `;
-            } else {
-                document.getElementById('video-info').innerHTML = '<p>Video information not available.</p>';
-            }
-        });
-    </script>
+    <script src="video.js"></script>
 </body>
 </html>
