@@ -59,6 +59,27 @@ app.get('/get_videos', (req, res) => {
     });
 });
 
+// Route to get related videos
+app.get('/get_related_videos', (req, res) => {
+    const { tags, excludeId } = req.query;
+
+    // Create SQL query to find related videos based on tags
+    const query = `
+        SELECT * FROM videos 
+        WHERE tags LIKE ? 
+        AND id != ?
+    `;
+    const tagPattern = `%${tags.split(',').map(tag => tag.trim()).join('%')}%`;
+
+    db.all(query, [tagPattern, excludeId], (err, rows) => {
+        if (err) {
+            console.error('Error fetching related videos:', err);
+            return res.status(500).send('Error fetching related videos');
+        }
+        res.json({ videos: rows });
+    });
+});
+
 // Route to delete a video
 app.delete('/delete_video/:id', (req, res) => {
     const videoId = req.params.id;
