@@ -4,7 +4,7 @@ const sqlite3 = require('sqlite3').verbose();
 const path = require('path');
 
 // Initialize SQLite database
-const db = new sqlite3.Database(path.resolve(__dirname, '.data/videos.db'), (err) => {
+const db = new sqlite3.Database(path.resolve(__dirname, 'public/videos.db'), (err) => {
     if (err) {
         console.error('Error opening database:', err);
     } else {
