@@ -1,0 +1,17 @@
+{
+  "videos": [
+    {
+      "id": 1,
+      "title": "Video Title 1",
+      "tags": "Tag1, Tag2",
+      "embed": "https://www.youtube.com/embed/VIDEO_ID1"
+    },
+    {
+      "id": 2,
+      "title": "Video Title 2",
+      "tags": "Tag3, Tag4",
+      "embed": "https://www.youtube.com/embed/VIDEO_ID2"
+    }
+    // Add more videos here
+  ]
+}
