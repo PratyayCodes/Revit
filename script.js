@@ -1,19 +1,22 @@
-document.addEventListener('DOMContentLoaded', function() {
+document.addEventListener('DOMContentLoaded', function () {
     let page = 0;
     const limit = 5; // Number of videos to load at once
     let loading = false;
+
     let allVideos = [];
     let filteredVideos = [];
     let searchQuery = '';
 
+    // Fetch videos from a local JSON file
     function fetchAllVideos() {
-        return fetch('/get_videos')
+        return fetch('videos.json')
             .then(response => response.json())
             .then(data => {
                 allVideos = data.videos;
                 filteredVideos = allVideos;
                 displayVideos(filteredVideos.slice(0, limit));
-            });
+            })
+            .catch(error => console.error('Error fetching videos:', error));
     }
 
     function displayVideos(videos, append = false) {
@@ -28,34 +31,23 @@ document.addEventListener('DOMContentLoaded', function() {
             const card = document.createElement('div');
             card.className = 'video-card';
 
-            // Thumbnail image
-            const thumbnailImg = document.createElement('img');
-            thumbnailImg.src = `thumbnail/${video.id}.webp`; // Path to the thumbnail image
-            thumbnailImg.alt = video.title;
-            thumbnailImg.className = 'thumbnail-image';
-            thumbnailImg.loading = 'lazy'; // Optimize loading
-
-            // Handle thumbnail load error
-            thumbnailImg.onerror = () => {
-                console.error(`Thumbnail not found for video ID: ${video.id}`);
-                thumbnailImg.src = 'path/to/default-thumbnail.webp'; // Use a default thumbnail if needed
-            };
+            // Static thumbnail from the embed link
+            const staticThumbnail = document.createElement('img');
+            staticThumbnail.src = 'static-thumbnail.webp'; // Static placeholder image
+            staticThumbnail.alt = video.title;
+            staticThumbnail.className = 'thumbnail-image';
+            staticThumbnail.loading = 'lazy'; // Optimize loading
 
             // Append thumbnail and video info to the card
-            card.innerHTML += `
+            card.innerHTML = `
                 <div class="thumbnail">
-                    ${thumbnailImg.outerHTML}
+                    ${staticThumbnail.outerHTML}
                 </div>
                 <div class="card-info">
                     <h3>${video.title}</h3>
                     <p>${video.tags}</p>
                 </div>
             `;
-
-            // Hide the loading spinner once the thumbnail is loaded
-            thumbnailImg.onload = () => {
-                // No spinner to hide here, as it's moved below
-            };
 
             // Redirect to video page on click
             card.addEventListener('click', () => {
@@ -66,17 +58,17 @@ document.addEventListener('DOMContentLoaded', function() {
         });
 
         videoCardsContainer.appendChild(fragment);
-        
+
         // Hide global loading spinner after videos are loaded
         loading = false;
-        document.getElementById('loading').style.display = 'none'; // Hide loading spinner at the bottom
+        document.getElementById('loading').style.display = 'none';
     }
 
     function loadMoreVideos() {
         if (loading) return;
 
         loading = true;
-        document.getElementById('loading').style.display = 'block'; // Show loading spinner at the bottom
+        document.getElementById('loading').style.display = 'block'; // Show loading spinner
 
         const start = page * limit;
         const end = start + limit;
@@ -86,7 +78,7 @@ document.addEventListener('DOMContentLoaded', function() {
             displayVideos(currentEntries, true);
             page++;
         } else {
-            document.getElementById('loading').style.display = 'none'; // Hide loading spinner if no more videos
+            document.getElementById('loading').style.display = 'none'; // Hide loading spinner
         }
 
         loading = false;
@@ -105,7 +97,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
     function debounce(func, wait) {
         let timeout;
-        return function(...args) {
+        return function (...args) {
             clearTimeout(timeout);
             timeout = setTimeout(() => func.apply(this, args), wait);
         };
